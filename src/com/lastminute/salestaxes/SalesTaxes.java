@@ -10,64 +10,70 @@ import java.util.Locale;
 import java.util.Scanner;
 
 public class SalesTaxes {
-
-	static float salesTaxes = 0;
-	static float price;
-	static float total = 0;
-	static int quantity = 0;
-	static boolean isImported = false;
-	static boolean isExempt = false;
-	static String line="";
-	static String exempt="";
-	static DecimalFormat df = new DecimalFormat("0.00", DecimalFormatSymbols.getInstance(Locale.ENGLISH));
-	static Charset encoding = Charset.forName("UTF-8");
+	
+	float salesTaxes = 0;
+	float price;
+	float total = 0;
+	int quantity = 0;
+	boolean isImported = false;
+	boolean isExempt = false;
+	String line="";
+	String exempt="";
+	DecimalFormat df = new DecimalFormat("0.00", DecimalFormatSymbols.getInstance(Locale.ENGLISH));
+	Charset encoding = Charset.forName("UTF-8");
+	
+	public SalesTaxes(){
+			
+	}
 		
 	public static void main(String args[]) throws Exception
-	{     
+	{    
+		SalesTaxes taxes= new SalesTaxes();
+		
 		try{
 			
-			loadExempt();
-			Scanner fileScanner = new Scanner(loadInput());
+			taxes.loadExempt();
+			Scanner fileScanner = new Scanner(taxes.loadInput());
 
 			while (fileScanner.hasNextLine()) {
 				while (fileScanner.hasNext()) { 
 					if (fileScanner.hasNextInt()) { 
-						quantity = fileScanner.nextInt();
-						line+= quantity;
+						taxes.quantity = fileScanner.nextInt();
+						taxes.line+= taxes.quantity;
 					}
 					else if(fileScanner.hasNext()){
 						String wordScanned = fileScanner.next();
 						if(wordScanned.matches("at")){
-							line+=": ";
+							taxes.line+=": ";
 						}else if(wordScanned.matches("\\d+.\\d+")){
-							calculateTaxesForProduct(wordScanned);
+							taxes.calculateTaxesForProduct(wordScanned);
 						}
 						else{
-							checkForImportedAndExemption(wordScanned);
+							taxes.checkForImportedAndExemption(wordScanned);
 						}
 					}
 				}                    
 			}
 			
 			fileScanner.close();
-			printResult();
+			taxes.printTotalAndSalesTaxes();
 
 		}catch(Exception e){
 			System.out.println("Error is: "+e.getMessage());
 		}
 	}
 	
-	public static void loadExempt() throws Exception{
+	public void loadExempt() throws Exception{
 		Path path = Paths.get(ClassLoader.class.getResource("/Exempt.txt").toURI());
 		exempt = new String(Files.readAllBytes(path), encoding);
 	}
 	
-	public static Path loadInput() throws Exception{
+	public Path loadInput() throws Exception{
 		Path input = Paths.get(ClassLoader.class.getResource("/Input.txt").toURI());
 		return input;
 	}
 	
-	public static void calculateTaxesForProduct(String wordScanned) throws Exception{
+	public void calculateTaxesForProduct(String wordScanned) throws Exception{
 		price = Float.parseFloat(wordScanned);
 		float tax = 0;
 		if(isImported){
@@ -86,7 +92,7 @@ public class SalesTaxes {
 		line = "";
 	}
 	
-	public static void checkForImportedAndExemption(String wordScanned) throws Exception{
+	public void checkForImportedAndExemption(String wordScanned) throws Exception{
 		if(wordScanned.equalsIgnoreCase("imported")){
 			isImported = true;
 		}else{
@@ -97,7 +103,7 @@ public class SalesTaxes {
 		}
 	}
 	
-	public static void printResult() throws Exception{
+	public void printTotalAndSalesTaxes() throws Exception{
 		System.out.println("Sales Taxes: "+df.format(salesTaxes));
 		System.out.println("Total: "+df.format(total));
 	}

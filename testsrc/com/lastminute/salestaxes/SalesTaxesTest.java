@@ -24,7 +24,6 @@ public class SalesTaxesTest {
 		assertNotNull(classUnderTest);
 	}
 	
-	@SuppressWarnings("static-access")
 	@Test
 	public void testLoadExempt() {
 		try{
@@ -33,10 +32,8 @@ public class SalesTaxesTest {
 		}catch(Exception e){
 			assertTrue(false);
 		}
-		assertTrue(true);
 	}
 	
-	@SuppressWarnings("static-access")
 	@Test
 	public void testLoadInput() {
 		try{
@@ -45,27 +42,60 @@ public class SalesTaxesTest {
 		}catch(Exception e){
 			assertTrue(false);
 		}
-		assertTrue(true);
 	}
 	
-	@SuppressWarnings("static-access")
 	@Test
 	public void testCalculateTaxexForProduct() throws Exception{
+		classUnderTest.isImported = false;
 		classUnderTest.isExempt = true;
-		classUnderTest.calculateTaxesForProduct("12.13");
+		classUnderTest.calculateTaxesForProduct("10.00");
 		assertTrue(classUnderTest.salesTaxes>0);
-		System.out.println(classUnderTest.salesTaxes);
 		
 		classUnderTest.isExempt = false;
 		classUnderTest.isImported = true;
-		classUnderTest.calculateTaxesForProduct("12.13");
+		classUnderTest.calculateTaxesForProduct("10.00");
 		assertTrue(classUnderTest.salesTaxes>0);
-		System.out.println(classUnderTest.salesTaxes);
 		
 		classUnderTest.isExempt = true;
-		classUnderTest.calculateTaxesForProduct("12.13");
+		classUnderTest.calculateTaxesForProduct("10.00");
 		assertTrue(classUnderTest.salesTaxes>0);
-		System.out.println(classUnderTest.salesTaxes);
-		
+
 	}
+	
+	@Test
+	public void testCheckForImportedAndExemption() {
+		try{
+			classUnderTest.isImported = false;
+			classUnderTest.isExempt = false;
+			classUnderTest.checkForImportedAndExemption("imported");
+			assertTrue(classUnderTest.isImported);
+			assertTrue(!classUnderTest.isExempt);
+
+			classUnderTest.isImported = false;
+			classUnderTest.isExempt = false;
+			classUnderTest.checkForImportedAndExemption("chocolates");
+			assertTrue(!classUnderTest.isExempt);
+			assertTrue(classUnderTest.isImported);
+			
+			classUnderTest.isImported = false;
+			classUnderTest.isExempt = false;
+			classUnderTest.checkForImportedAndExemption("paper");
+			assertTrue(!classUnderTest.isImported);
+			assertTrue(!classUnderTest.isExempt);
+
+		}catch(Exception e){
+			assertTrue(false);
+		}
+	}
+	
+	@Test
+	public void testPrintTotalAndSalesTaxes() {
+		try{
+			classUnderTest.printTotalAndSalesTaxes();
+			assertTrue();
+		}catch(Exception e){
+			assertTrue(false);
+		}
+	}
+	
 }
