@@ -3,3 +3,4 @@ jdk:
   - oraclejdk8
 sudo: false
 script: mvn clean verify
+script: java -cp /home/travis/build/RobertoBottino/TDD/target/test-0.0.1-SNAPSHOT.jar ch.alten.Run /home/travis/build/RobertoBottino/TDD/Input.txt
