@@ -5,28 +5,29 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.Locale;
 import java.util.Scanner;
 
 public class SalesTaxes {
 
+	static float salesTaxes = 0;
+	static float price;
+	static float total = 0;
+	static int quantity = 0;
+	static boolean isImported = false;
+	static boolean isExempt = false;
+	static String line="";
+	static String exempt="";
+	static DecimalFormat df = new DecimalFormat("0.00", DecimalFormatSymbols.getInstance(Locale.ENGLISH));
+	static Charset encoding = Charset.forName("UTF-8");
+		
 	public static void main(String args[]) throws Exception
 	{     
-		float salesTaxes = 0;
-		float price;
-		float total = 0;
-		int quantity = 0;
-		boolean isImported = false;
-		boolean isExempt = false;
-		String line="";
-		DecimalFormat df = new DecimalFormat("0.00");
-		Charset encoding = Charset.forName("UTF-8");
-
 		try{
-			Path path = Paths.get(ClassLoader.class.getResource("/Exempt.txt").toURI());
-			String exempt = new String(Files.readAllBytes(path), encoding);
-
-			Path input = Paths.get(ClassLoader.class.getResource("/Input.txt").toURI());
-			Scanner fileScanner = new Scanner(input);
+			
+			loadExempt();
+			Scanner fileScanner = new Scanner(loadInput());
 
 			while (fileScanner.hasNextLine()) {
 				while (fileScanner.hasNext()) { 
@@ -39,44 +40,65 @@ public class SalesTaxes {
 						if(wordScanned.matches("at")){
 							line+=": ";
 						}else if(wordScanned.matches("\\d+.\\d+")){
-							price = Float.parseFloat(wordScanned);
-							float tax = 0;
-							if(isImported){
-								line = line.replaceFirst(""+ quantity, quantity + " imported");
-								tax += Math.round((price * 5 / 100) * 20) / 20.0;   
-							}
-							if(!isExempt){
-								tax += Math.round((price * 10 / 100) * 20) / 20.0;  
-							}
-							salesTaxes+=tax;
-							total+=price+tax;
-							line += df.format(price+tax);
-							System.out.println(line);
-							isImported=false;
-							isExempt = false;
-							line = "";
+							calculateTaxesForProduct(wordScanned);
 						}
 						else{
-							if(wordScanned.equalsIgnoreCase("imported")){
-								isImported = true;
-							}else{
-								if(exempt.indexOf(wordScanned) != -1){
-									isExempt = true;
-								}
-								line += " " + wordScanned;
-							}
+							checkForImportedAndExemption(wordScanned);
 						}
 					}
 				}                    
 			}
-			System.out.println("Sales Taxes: "+df.format(salesTaxes));
-			System.out.println("Total: "+df.format(total));
-			fileScanner.close();
-
 			
+			fileScanner.close();
+			printResult();
+
 		}catch(Exception e){
 			System.out.println("Error is: "+e.getMessage());
 		}
-		
+	}
+	
+	public static void loadExempt() throws Exception{
+		Path path = Paths.get(ClassLoader.class.getResource("/Exempt.txt").toURI());
+		exempt = new String(Files.readAllBytes(path), encoding);
+	}
+	
+	public static Path loadInput() throws Exception{
+		Path input = Paths.get(ClassLoader.class.getResource("/Input.txt").toURI());
+		return input;
+	}
+	
+	public static void calculateTaxesForProduct(String wordScanned) throws Exception{
+		price = Float.parseFloat(wordScanned);
+		float tax = 0;
+		if(isImported){
+			line = line.replaceFirst(""+ quantity, quantity + " imported");
+			tax += Math.round((price * 5 / 100) * 20) / 20.0;   
+		}
+		if(!isExempt){
+			tax += Math.round((price * 10 / 100) * 20) / 20.0;  
+		}
+		salesTaxes+=tax;
+		total+=price+tax;
+		line += df.format(price+tax);
+		System.out.println(line);
+		isImported=false;
+		isExempt = false;
+		line = "";
+	}
+	
+	public static void checkForImportedAndExemption(String wordScanned) throws Exception{
+		if(wordScanned.equalsIgnoreCase("imported")){
+			isImported = true;
+		}else{
+			if(exempt.indexOf(wordScanned) != -1){
+				isExempt = true;
+			}
+			line += " " + wordScanned;
+		}
+	}
+	
+	public static void printResult() throws Exception{
+		System.out.println("Sales Taxes: "+df.format(salesTaxes));
+		System.out.println("Total: "+df.format(total));
 	}
 }
