@@ -11,14 +11,14 @@ import java.util.Scanner;
 
 public class SalesTaxes {
 	
-	float salesTaxes = 0;
+	public float salesTaxes = 0;
 	float price;
 	float total = 0;
 	int quantity = 0;
-	boolean isImported = false;
-	boolean isExempt = false;
+	public boolean isImported = false;
+	public boolean isExempt = false;
 	String line="";
-	String exempt="";
+	public String exempt="";
 	DecimalFormat df = new DecimalFormat("0.00", DecimalFormatSymbols.getInstance(Locale.ENGLISH));
 	Charset encoding = Charset.forName("UTF-8");
 	

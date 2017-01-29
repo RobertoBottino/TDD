@@ -8,8 +8,6 @@ import java.nio.file.Path;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.sun.xml.internal.ws.policy.AssertionSet;
-
 public class SalesTaxesTest {
 
 	SalesTaxes classUnderTest; 
@@ -45,37 +43,44 @@ public class SalesTaxesTest {
 	}
 	
 	@Test
-	public void testCalculateTaxexForProduct() throws Exception{
+	public void testCalculateTaxesForProduct() throws Exception{		
 		classUnderTest.isImported = false;
 		classUnderTest.isExempt = true;
-		classUnderTest.calculateTaxesForProduct("10.00");
-		assertTrue(classUnderTest.salesTaxes>0);
+		classUnderTest.salesTaxes = 0;
+		classUnderTest.calculateTaxesForProduct("12.55");
+		assertTrue(classUnderTest.salesTaxes == 0);
 		
 		classUnderTest.isExempt = false;
 		classUnderTest.isImported = true;
-		classUnderTest.calculateTaxesForProduct("10.00");
-		assertTrue(classUnderTest.salesTaxes>0);
+		classUnderTest.salesTaxes = 0;
+		classUnderTest.calculateTaxesForProduct("14.33");
+		assertTrue(classUnderTest.salesTaxes== 2.15f);
 		
+		classUnderTest.isImported = true;
 		classUnderTest.isExempt = true;
-		classUnderTest.calculateTaxesForProduct("10.00");
-		assertTrue(classUnderTest.salesTaxes>0);
+		classUnderTest.salesTaxes = 0;
+		classUnderTest.calculateTaxesForProduct("19.99");
+		assertTrue(classUnderTest.salesTaxes==1);
 
 	}
 	
 	@Test
 	public void testCheckForImportedAndExemption() {
 		try{
+			classUnderTest.loadExempt();
+			
 			classUnderTest.isImported = false;
 			classUnderTest.isExempt = false;
 			classUnderTest.checkForImportedAndExemption("imported");
 			assertTrue(classUnderTest.isImported);
 			assertTrue(!classUnderTest.isExempt);
-
+			
 			classUnderTest.isImported = false;
 			classUnderTest.isExempt = false;
 			classUnderTest.checkForImportedAndExemption("chocolates");
-			assertTrue(!classUnderTest.isExempt);
-			assertTrue(classUnderTest.isImported);
+			assertTrue(!classUnderTest.isImported);
+			assertTrue(classUnderTest.isExempt);
+			
 			
 			classUnderTest.isImported = false;
 			classUnderTest.isExempt = false;
@@ -92,7 +97,7 @@ public class SalesTaxesTest {
 	public void testPrintTotalAndSalesTaxes() {
 		try{
 			classUnderTest.printTotalAndSalesTaxes();
-			assertTrue();
+			assertTrue(true);
 		}catch(Exception e){
 			assertTrue(false);
 		}
