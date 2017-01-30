@@ -26,7 +26,7 @@ public class Product {
 		super();
 		this.df = df;
 		this.wrongProduct = true;
-		Matcher m = Pattern.compile("(\\d+)([a-zA-Z ]+)(\\d+.\\d+)").matcher(row);
+		Matcher m = Pattern.compile("(\\d+)(\\s[a-zA-Z ]+)(\\d+.\\d+)").matcher(row);
 		if(m.matches())
 		{
 			this.name = m.group(2);
