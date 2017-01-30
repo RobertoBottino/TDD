@@ -126,6 +126,9 @@ public class RunTest {
 			p = new Product("1 box of 5.25 chocolates at", classUnderTest.exempt, classUnderTest.df);
 			assertNotNull(p);
 			assertTrue(p.isWrongProduct() == true);
+			p = new Product("1box of chocolates at 11.25", classUnderTest.exempt, classUnderTest.df);
+			assertNotNull(p);
+			assertTrue(p.isWrongProduct() == true);
 		}catch(Exception e){
 			assertTrue(false);
 		}
